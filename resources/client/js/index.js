@@ -5,16 +5,23 @@ function renderMessage(message) {
         `<div>` +
         `<span class="badge badge-primary mr-2">${message.author}</span>` +
         `<span class="badge badge-info">${message.postDate}</span>` +
-        `<div id="messageButtons${message.id}" class="float-right">` +
-            `<button class="editMessage btn btn-sm btn-secondary" data-message-id="${message.id}">` +
-                `Edit` +
-            `</button>` +
-            `<button class="deleteMessage btn btn-sm btn-danger ml-2" data-message-id="${message.id}">` +
-                `Delete` +
-            `</button>` +
+        `<div class="float-right">` +
+        `<button class="editMessage btn btn-sm btn-secondary ml-2" data-message-id="${message.id}">` +
+        `Edit` +
+        `</button>` +
+        `<button class="saveMessage btn btn-sm btn-success ml-2" data-message-id="${message.id}">` +
+        `Save` +
+        `</button>` +
+        `<button class="cancelEditMessage btn btn-sm btn-warning ml-2" data-message-id="${message.id}">` +
+        `Cancel` +
+        `</button>` +
+        `<button class="deleteMessage btn btn-sm btn-danger ml-2" data-message-id="${message.id}">` +
+        `Delete` +
+        `</button>` +
         `</div>` +
         `</div>` +
         `<div class="messageText py-2 mx-2" id="text${message.id}">${message.text}</div>` +
+        `<input class="messageEditInput w-100 form-control" id="editInput${message.id}">` +
         `</div>`;
 }
 
@@ -33,6 +40,7 @@ function loadMessages() {
                 $('#messages').html(messagesHTML);
                 resetDeleteButtons();
                 resetEditButtons();
+                cancelEdits();
             }
         }
     });
@@ -92,41 +100,30 @@ function resetDeleteButtons() {
 }
 
 function resetEditButtons() {
-
     $('.editMessage').click(event => {
 
         cancelEdits();
 
         const editButton = $(event.target);
-        const deleteButton = editButton.next();
-
+        const saveButton = editButton.next();
+        const cancelButton = saveButton.next();
+        const deleteButton = cancelButton.next();
         const messageId = editButton.attr("data-message-id");
-        const messageButtons = $("#messageButtons" + messageId);
-
         const textDiv = $("#text" + messageId);
         const currentText = textDiv.text();
+        const editInput = textDiv.next();
 
         editButton.hide();
+        saveButton.show();
+        saveButton.click(event => saveEdit(event));
+        cancelButton.show();
+        cancelButton.click(event => cancelEdits());
         deleteButton.hide();
-
-        const editInput = $(`<input class="messageEditInput w-100 form-control"` +
-            `id="editInput${messageId}" value="${currentText}"/>`);
-        textDiv.after(editInput);
-        editInput.focus().select();
+        editInput.val(currentText);
+        editInput.show().focus().select();
         textDiv.hide();
 
-        const saveButton = $(`<button class="saveMessage btn btn-sm btn-success float-right ml-2"` +
-            `data-message-id="${messageId}">Save</button>`);
-        saveButton.click(event => saveEdit(event));
-        messageButtons.append(saveButton);
-
-        const cancelButton = $(`<button class="cancelEditMessage btn btn-sm btn-warning float-right ml-2"` +
-            `data-message-id="${messageId}">Cancel</button>`);
-        cancelButton.click(event => cancelEdits());
-        messageButtons.append(cancelButton);
-
     });
-
 }
 
 function resetForm() {
