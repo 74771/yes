@@ -49,12 +49,12 @@ function loadMessages() {
 function saveEdit(event) {
 
     const messageId = $(event.target).attr('data-message-id');
-    const editInput = $("#editInput" + messageId);
+    const editedText = $("#editInput" + messageId).val();
 
     $.ajax({
         url: '/message/edit',
         type: 'POST',
-        data: {"messageId": messageId, "messageText": editInput.val()},
+        data: {"messageId": messageId, "messageText": editedText},
         success: response => {
             if (response === 'OK') {
                 pageLoad();
