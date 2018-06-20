@@ -77,15 +77,25 @@ public class MessageController {
     public String editMessage(@FormParam("messageId") int messageId, @FormParam("messageText") String messageText) {
         Console.log("/message/edit - Message " + messageId);
         Message message = MessageService.selectById(messageId);
-        String messageDate = new Date().toString();
         if (message == null) {
             return "That message doesn't appear to exist";
         } else {
+            String messageDate = new Date().toString();
             message.setText(messageText);
             message.setPostDate(messageDate);
             return MessageService.update(message);
         }
     }
-
-
 }
+
+
+
+
+
+
+
+        
+    
+
+
+
